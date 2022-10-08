@@ -21,6 +21,31 @@ img = cv2.imread("D:/wangyi/data/mosaic/internet_image/no_mosaic/1.jpg")
 normal_mosaic(img, 10)
 plt.imshow(img[:,:,::-1])
 
+###########################圆形马赛克###########################
+#生成圆形马赛克
+def masaic_generate_circle(img):
+    height, width, channel = img.shape
+    y1 = int((random.randint(0, 4) / 10) * height)
+    y2 = int((random.randint(6, 10) / 10) * height)
+    x1 = int((random.randint(0, 4) / 10) * width)
+    x2 = int((random.randint(6, 10) / 10) * width)
+    # s = 10
+    s = random.randint(3, 20)
+    roi = img[y1:y2, x1:x2]
+    masic = roi[::s, ::s]
+    mask = np.zeros(img.shape, dtype=np.uint8)
+    m_h, m_w, m_c = masic.shape
+    circle_dot = (int(m_w/2), int(m_h/2))#圆心
+    r = random.randint(20, 40)#半径
+    for i in range(m_h):
+        for j in range(m_w):
+            #点到圆心的距离小于半径  感觉不是特别对
+            if (i - circle_dot[1]) ** 2 + (j - circle_dot[0]) ** 2 < r ** 2:
+                img[y1 + i * s:y1 + s + i * s, x1 + j * s:x1 + s + j * s] = masic[i, j]
+                mask[y1 + i * s:y1 + s + i * s, x1 + j * s:x1 + s + j * s] = 255
+
+    return img, mask
+
 ###########################高斯马赛克###########################
 def gaussian_mosaic(selected_img):
     height, width, _= selected_img.shape
